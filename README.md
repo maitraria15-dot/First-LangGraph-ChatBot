@@ -91,7 +91,7 @@ streamlit run app.py
 
 ## 📸 Demo
 
-*(Screenshot coming soon)*
+![Chatbot Demo](images/chatbot-demo.png)
 
 ---
 
