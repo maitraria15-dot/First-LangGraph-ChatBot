@@ -17,13 +17,43 @@ from langchain_core.messages import HumanMessage
 load_dotenv()
 
 # --------------------------
+# Page Configuration
+# --------------------------
+
+st.set_page_config(
+    page_title="First LangGraph ChatBot",
+    page_icon="🤖",
+    layout="centered"
+)
+
+# --------------------------
+# Sidebar
+# --------------------------
+
+with st.sidebar:
+
+    st.title("🤖 About")
+
+    st.write("### Tech Stack")
+    st.write("- LangGraph")
+    st.write("- LangChain")
+    st.write("- Groq")
+    st.write("- Streamlit")
+
+    st.divider()
+
+    st.write("### Version")
+    st.success("Version 1.1")
+
+# --------------------------
 # Create the LLM
 # --------------------------
 
-llm = ChatGroq(
-    api_key = os.getenv("GROQ_API_KEY"),
-    model = "llama-3.1-8b-instant"
+api_key = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
 
+llm = ChatGroq(
+    api_key=api_key,
+    model="llama-3.1-8b-instant"
 )
 
 # --------------------------
@@ -50,34 +80,55 @@ def chatbot(state: State):
 # --------------------------
 
 builder = StateGraph(State)
+
 builder.add_node("chatbot", chatbot)
+
 builder.add_edge(START, "chatbot")
+
 builder.add_edge("chatbot", END)
+
 graph = builder.compile()
 
-# -------------------------
-# Streamlit UI
-# -------------------------
+# --------------------------
+# Main UI
+# --------------------------
 
-st.title("My First LangGraph Chatbot")
+st.title("🤖 My First LangGraph ChatBot")
 
-user_input = st.chat_input("Ask me anything ....")
+st.caption(
+    "Built with LangGraph • LangChain • Groq • Streamlit"
+)
+
+st.divider()
+
+user_input = st.chat_input("Ask me anything...")
 
 if user_input:
+
     with st.chat_message("user"):
         st.markdown(user_input)
+
     try:
 
-        result  = graph.invoke(
+        result = graph.invoke(
             {
-                "messages": [HumanMessage(content = user_input)]
+                "messages": [
+                    HumanMessage(content=user_input)
+                ]
             }
         )
 
         reply = result["messages"][-1].content
 
     except Exception as e:
-        reply = str(e)
+
+        reply = f"❌ Error: {e}"
 
     with st.chat_message("assistant"):
         st.markdown(reply)
+
+st.divider()
+
+st.caption(
+    "Made with ❤️ by Ria Maitra"
+)
